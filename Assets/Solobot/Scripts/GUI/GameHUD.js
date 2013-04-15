@@ -23,12 +23,14 @@ var fuelCellOffset = Vector2(0, 0);
 // The counter text inside the fuel cell image
 var fuelCellCountOffset = Vector2(391, 161);
 
-private var playerInfo : ThirdPersonStatus;
+private var playerInfo : PlayerStatus;
+private var gameInfo : SideScrollController;
 
 // Cache link to player's state management script for later use.
 function Awake()
 {
-	playerInfo = FindObjectOfType(ThirdPersonStatus);
+	playerInfo = FindObjectOfType(PlayerStatus);
+	gameInfo = FindObjectOfType(SideScrollController);
 
 	if (!playerInfo)
 		Debug.Log("No link to player's state manager.");
@@ -36,17 +38,34 @@ function Awake()
 
 function OnGUI ()
 {
+	//	target = GameObject.FindWithTag("Player").;
+	
+	
+		
+	GUI.backgroundColor = Color.red;
+	GUI.Box (Rect (10,10,220,40), "Health: " + playerInfo.health + "/" + playerInfo.maxHealth);
+	
+	GUI.backgroundColor = Color.green;
+	GUI.HorizontalScrollbar(Rect(20,30,200,20),0,playerInfo.health,0,playerInfo.maxHealth);
+	
+	GUI.Toggle(Rect(10,60,100,50), gameInfo.hasJetpack , "Jetpack");
+	
+	/*
+	if (GUI.Button (Rect (20,40,80,20), "Level 1")) {
+		Application.LoadLevel (1);
+	}
+	*/
+	
 
-	var itemsLeft = playerInfo.GetRemainingItems();	// fetch items remaining -- the fuel cans. This can be a negative number!
-
+	
 	// Similarly, health needs to be clamped to the number of pie segments we can show.
 	// We also need to check it's not negative, so we'll use the Mathf Clamp() function:
-	var healthPieIndex = Mathf.Clamp(playerInfo.health, 0, healthPieImages.length);
+	//var healthPieIndex = Mathf.Clamp(playerInfo.health, 0, healthPieImages.length);
 
 	// Displays fuel cans remaining as a number.	
 	// As we don't want to display negative numbers, we clamp the value to zero if it drops below this:
-	if (itemsLeft < 0)
-		itemsLeft = 0;
+	//if (itemsLeft < 0)
+		//itemsLeft = 0;
 
 	// Set up gui skin
 	GUI.skin = guiSkin;
@@ -55,19 +74,19 @@ function OnGUI ()
 	GUI.matrix = Matrix4x4.TRS (Vector3(0, 0, 0), Quaternion.identity, Vector3 (Screen.height / nativeVerticalResolution, Screen.height / nativeVerticalResolution, 1)); 
 
 	// Health & lives info.
-	DrawImageBottomAligned( healthImageOffset, healthImage); // main image.
+	//DrawImageBottomAligned( healthImageOffset, healthImage); // main image.
 
 	// now for the pie chart. This is where a decent graphics package comes in handy to check relative sizes and offsets.
-	var pieImage = healthPieImages[healthPieIndex-1];
-	DrawImageBottomAligned( healthPieImageOffset, pieImage );
+	//var pieImage = healthPieImages[healthPieIndex-1];
+	//DrawImageBottomAligned( healthPieImageOffset, pieImage );
 	
 	// Displays lives left as a number.	
-	DrawLabelBottomAligned( livesCountOffset, playerInfo.lives.ToString() );	
+	//DrawLabelBottomAligned( livesCountOffset, playerInfo.lives.ToString() );	
 	
 	// Now it's the fuel cans' turn. We want this aligned to the lower-right corner of the screen:
-	DrawImageBottomRightAligned( fuelCellOffset, fuelCellsImage);
+	//DrawImageBottomRightAligned( fuelCellOffset, fuelCellsImage);
 
-	DrawLabelBottomRightAligned( fuelCellCountOffset, itemsLeft.ToString() );
+	//DrawLabelBottomRightAligned( fuelCellCountOffset, itemsLeft.ToString() );
 }
 
 function DrawImageBottomAligned (pos : Vector2, image : Texture2D)
